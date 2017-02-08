@@ -72,6 +72,7 @@ def play_match(player1, player2):
     # initialize both games with a random move and response
     for _ in range(2):
         move = random.choice(games[0].get_legal_moves())
+        #print (move)
         games[0].apply_move(move)
         games[1].apply_move(move)
 

@@ -41,72 +41,12 @@ def custom_score(game, player):
     if game.is_winner(player):
         return float("inf")
 
-    return float(len(game.get_legal_moves(player)) - len(game.get_legal_moves(game.get_opponent(player))))
-    #raise NotImplementedError
-
-def eval_score_function1(game, player):
-    """Calculate the heuristic value of a game state from the point of view
-    of the given player.
-    Reducing the scale of opponent score by 0.5
-
-
-    Parameters
-    ----------
-    game : `isolation.Board`
-        An instance of `isolation.Board` encoding the current state of the
-        game (e.g., player locations and blocked cells).
-
-    player : object
-        A player instance in the current game (i.e., an object corresponding to
-        one of the player objects `game.__player_1__` or `game.__player_2__`.)
-
-    Returns
-    ----------
-    float
-        The heuristic value of the current game state to the specified player.
-    """
-
-
-    if game.is_loser(player):
-        return float("-inf")
-
-    if game.is_winner(player):
-        return float("inf")
-
-
-    return float(len(game.get_legal_moves(player)) - 0.5*len(game.get_legal_moves(game.get_opponent(player))))
-
-
-def eval_score_function2(game, player):
-    """Calculate the heuristic value of a game state from the point of view
-    of the given player.
-
-
-    Parameters
-    ----------
-    game : `isolation.Board`
-        An instance of `isolation.Board` encoding the current state of the
-        game (e.g., player locations and blocked cells).
-
-    player : object
-        A player instance in the current game (i.e., an object corresponding to
-        one of the player objects `game.__player_1__` or `game.__player_2__`.)
-
-    Returns
-    ----------
-    float
-        The heuristic value of the current game state to the specified player.
-    """
-
-    if game.is_loser(player):
-        return float("-inf")
-
-    if game.is_winner(player):
-        return float("inf")
-
     own_moves = len(game.get_legal_moves(player))
     opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
-    return float(0.5*own_moves - opp_moves)
+    return float(own_moves - 0.5*opp_moves )
+    #raise NotImplementedError
+
+
 
 class CustomPlayer:
     """Game-playing agent that chooses a move using your evaluation function
@@ -184,38 +124,34 @@ class CustomPlayer:
         """
 
         self.time_left = time_left
-        #p=multiprocessing.Pool(2)
+
 
 
         # Perform any required initializations, including selecting an initial
         # move from the game board (i.e., an opening book), or returning
         # immediately if there are no legal moves
 
-        #current_best_move = None
+        current_best_move = None
 
-        # opening moves - 2rd for player1 and 2nd move of player2 - push to move to central grid position if avaliable
-        '''
-        if len(game.get_blank_spaces()) > 46:
+        # opening moves
+
+        #If first move  - occupy central move
+        #if len(game.get_blank_spaces())==49:
+        #    return (3,3)
+        #if player2 and center not occupied
+        #if len(game.get_blank_spaces())==48 and (3,3) in legal_moves:
+        #    return (3,3)
 
 
-            central_legal_move=[]
-            all_central_moves = ((r, c) for r in (2, 3, 4) for c in (2, 3, 4))
-            _=[central_legal_move.append(move) for move in legal_moves if move in all_central_moves]
-            if len(central_legal_move)>0:
-             legal_moves=central_legal_move
-             #print(len(central_legal_move))
-             #print(central_legal_move)
-       '''
-        current_best_move=None
         try:
             # The search method call (alpha beta or minimax) should happen in
             # here in order to avoid timeout. The try/except block will
-            # automatically  catch the exception raised by the search method
+            # automatically catch the exception raised by the search method
             # when the timer gets close to expiring
             if self.iterative:
              depth = 1
              #maximum possible iteration or depth
-             max_depth = 47
+             max_depth = len(game.get_blank_spaces())
              #iternative deeping
              while depth <= max_depth:
                  if self.method == 'minimax':
@@ -235,56 +171,14 @@ class CustomPlayer:
         except Timeout:
 
                 # Handle any actions required at timeout, if necessary
-
+             #  print("timeout - log check")
+                #print(current_best_move)
+                #print(self.time_left())
                 return current_best_move
                    #return current_best_move
 
         # Return the best move from the last completed search iteration
         return current_best_move
-
-
-
-
-    def search_best_move(self, game, legal_moves, time_left):
-
-        current_best_move=None
-        try:
-            # The search method call (alpha beta or minimax) should happen in
-            # here in order to avoid timeout. The try/except block will
-            # automatically  catch the exception raised by the search method
-            # when the timer gets close to expiring
-            if self.iterative:
-             depth = 1
-             #maximum possible iteration or depth
-             max_depth = 47
-             #iternative deeping
-             while depth <= max_depth:
-                 if self.method == 'minimax':
-                     _, current_best_move = self.minimax(game, depth)
-                 else:
-                     _, current_best_move=self.alphabeta(game, depth)
-
-                 depth += 1
-                 #print(current_best_move)
-                 #print(depth)
-            else:
-                 if self.method == 'minimax':
-                     _, current_best_move = self.minimax(game, self.search_depth)
-                 else:
-                     _, current_best_move=self.alphabeta(game, self.search_depth)
-
-        except Timeout:
-
-                # Handle any actions required at timeout, if necessary
-
-                return current_best_move
-                   #return current_best_move
-
-        # Return the best move from the last completed search iteration
-        return current_best_move
-
-
-
 
     def minimax(self, game, depth, maximizing_player=True):
         """Implement the minimax search algorithm as described in the lectures.

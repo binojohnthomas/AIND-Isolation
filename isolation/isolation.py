@@ -262,7 +262,7 @@ class Board(object):
                       (1, -2),  (1, 2), (2, -1),  (2, 1)]
 
         valid_moves = [(r+dr,c+dc) for dr, dc in directions if self.move_is_legal((r+dr, c+dc))]
-
+        #print(valid_moves)
         return valid_moves
 
     def print_board(self):
@@ -327,9 +327,9 @@ class Board(object):
             move_start = curr_time_millis()
             time_left = lambda : time_limit - (curr_time_millis() - move_start)
             curr_move = self.active_player.get_move(game_copy, legal_player_moves, time_left)
+
             move_end = time_left()
 
-            # print move_end
 
             if curr_move is None:
                 curr_move = Board.NOT_MOVED
