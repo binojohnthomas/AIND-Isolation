@@ -14,9 +14,50 @@ class Timeout(Exception):
     pass
 
 
-def custom_score(game, player):
+def custom_score(game, player,x=1,y=0.5,z=1):
     """Calculate the heuristic value of a game state from the point of view
     of the given player.
+
+    Parameters
+    ----------
+    game : `isolation.Board`
+        An instance of `isolation.Board` encoding the current state of the
+        game (e.g., player locations and blocked cells).
+
+    player : object
+        A player instance in the current game (i.e., an object corresponding to
+        one of the player objects `game.__player_1__` or `game.__player_2__`.)
+
+    Returns
+    ----------
+    float
+        The heuristic value of the current game state to the specified player.
+    """
+
+
+    if game.is_loser(player):
+        return float("-inf")
+
+    if game.is_winner(player):
+        return float("inf")
+    opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
+    own_moves = len(game.get_legal_moves(player))
+
+    #print(len(game.get_blank_spaces()))
+    own_moves = len(game.get_legal_moves(player))
+    opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
+    return float(x * own_moves - y * opp_moves + z)
+
+
+    #raise NotImplementedError
+
+def eval_param_score_fn(game, player,x=1,y=0.5,z=1):
+    """Calculate the heuristic value of a game state from the point of view
+    of the given player. Hyper parameterized evaluation function
+     Here x,y,z are tuning parameter.
+        x range from 0 to 1
+        y range from 0 to 1
+        z is a scalar.
 
     Parameters
     ----------
@@ -43,8 +84,70 @@ def custom_score(game, player):
 
     own_moves = len(game.get_legal_moves(player))
     opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
-    return float(own_moves - 0.5*opp_moves )
-    #raise NotImplementedError
+    return float(x*own_moves - y*opp_moves + z )
+
+def eval_reduce_opp_score_fn(game, player):
+    """Calculate the heuristic value of a game state from the point of view
+    of the given player. Evaluate based on opponents score.
+
+    Parameters
+    ----------
+    game : `isolation.Board`
+        An instance of `isolation.Board` encoding the current state of the
+        game (e.g., player locations and blocked cells).
+
+    player : object
+        A player instance in the current game (i.e., an object corresponding to
+        one of the player objects `game.__player_1__` or `game.__player_2__`.)
+
+    Returns
+    ----------
+    float
+        The heuristic value of the current game state to the specified player.
+    """
+
+
+    if game.is_loser(player):
+        return float("-inf")
+
+    if game.is_winner(player):
+        return float("inf")
+    opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
+    return float(-opp_moves)
+
+def eval_normalize_score_fn(game, player):
+    """Calculate the heuristic value of a game state from the point of view
+    of the given player. Evaluate to see who has an edge on the move. Based on that its
+
+    Parameters
+    ----------
+    game : `isolation.Board`
+        An instance of `isolation.Board` encoding the current state of the
+        game (e.g., player locations and blocked cells).
+
+    player : object
+        A player instance in the current game (i.e., an object corresponding to
+        one of the player objects `game.__player_1__` or `game.__player_2__`.)
+
+    Returns
+    ----------
+    float
+        The heuristic value of the current game state to the specified player.
+    """
+
+
+    if game.is_loser(player):
+        return float("-inf")
+
+    if game.is_winner(player):
+        return float("inf")
+    opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
+    own_moves = len(game.get_legal_moves(player))
+    print (len(game.get_blank_spaces()))
+    if len(game.get_blank_spaces())>25:
+        return  float(0.5*own_moves-opp_moves)
+    else:
+        return float(own_moves - 0.5*opp_moves)
 
 
 
@@ -151,9 +254,10 @@ class CustomPlayer:
             if self.iterative:
              depth = 1
              #maximum possible iteration or depth
-             max_depth = len(game.get_blank_spaces())
+             #max_depth = len(game.get_blank_spaces())
              #iternative deeping
-             while depth <= max_depth:
+             while True:
+             #while depth <= max_depth:
                  if self.method == 'minimax':
                      _, current_best_move = self.minimax(game, depth)
                  else:
