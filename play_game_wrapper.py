@@ -10,6 +10,7 @@ player_1 = CustomPlayer()
 
 player_2 = GreedyPlayer()
 #player_2 = RandomPlayer()
+
 print(player_1,player_2)
 
 test_game = Board(player_1, player_2)
