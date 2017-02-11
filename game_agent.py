@@ -40,10 +40,7 @@ def custom_score(game, player,x=1,y=0.5,z=1):
 
     if game.is_winner(player):
         return float("inf")
-    opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
-    own_moves = len(game.get_legal_moves(player))
 
-    #print(len(game.get_blank_spaces()))
     own_moves = len(game.get_legal_moves(player))
     opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
     return float(x * own_moves - y * opp_moves + z)
@@ -117,7 +114,9 @@ def eval_reduce_opp_score_fn(game, player):
 
 def eval_normalize_score_fn(game, player):
     """Calculate the heuristic value of a game state from the point of view
-    of the given player. Evaluate to see who has an edge on the move. Based on that its
+    of the given player. The function evaluates based on the number of occupied space.
+    When board positions are less than half occupied, agent weighs to reduce opponent's legal move. (Aggressive play)
+
 
     Parameters
     ----------
@@ -279,7 +278,7 @@ class CustomPlayer:
                 #print(current_best_move)
                 #print(self.time_left())
                 return current_best_move
-                   #return current_best_move
+
 
         # Return the best move from the last completed search iteration
         return current_best_move
@@ -402,7 +401,7 @@ class CustomPlayer:
             # for each child node
             for move in legal_moves:
                 child_game = game.forecast_move(move)
-                #get alpha value of child  -  child node are minimizing node
+                #get alpha value of child  -  child node is minimizing node
                 value, _ = self.alphabeta(child_game, depth - 1,alpha,beta, maximizing_player=False)
                 #print(alpha,value, move)
                 #max(value,alpha)
@@ -419,9 +418,8 @@ class CustomPlayer:
             # for each child node
             for move in legal_moves:
                 child_game = game.forecast_move(move)
-                # get beta value of child  -  child nodes are maximizing node
+                # get beta value of child  -  child node is maximizing node
                 value, _ = self.alphabeta(child_game, depth - 1, alpha, beta, maximizing_player=True)
-                #print(alpha, value, move)
                 # min(value,beta)
 
                 if value < beta:

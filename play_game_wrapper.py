@@ -1,23 +1,15 @@
-import itertools
-import random
-import warnings
 import time
-
-from collections import namedtuple
 
 from isolation import Board
 
 from sample_players import GreedyPlayer
-from sample_players import RandomPlayer
-from sample_players import null_score
-from sample_players import open_move_score
-from sample_players import improved_score
+
 from game_agent import CustomPlayer
-from game_agent import custom_score
+
 player_1 = CustomPlayer()
 
-#player_2 = GreedyPlayer()
-player_2 = RandomPlayer()
+player_2 = GreedyPlayer()
+#player_2 = RandomPlayer()
 print(player_1,player_2)
 
 test_game = Board(player_1, player_2)
